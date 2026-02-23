@@ -5,7 +5,12 @@ import { useChat } from '@/lib/ChatContext';
 import { getAgentById } from '@/lib/agents';
 import Message from './Message';
 
-export default function ChatView() {
+// Props for mobile menu button
+interface ChatViewProps {
+  onMenuClick: () => void;
+}
+
+export default function ChatView({ onMenuClick }: ChatViewProps) {
   const { activeChannel, channels, typingAgent, clearHistory, historyLoaded } = useChat();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [showClearConfirm, setShowClearConfirm] = useState(false);
@@ -40,6 +45,15 @@ export default function ChatView() {
     <div className="chat-view">
       {/* Channel Header */}
       <header className="chat-header">
+        {/* Hamburger menu button - only visible on mobile */}
+        <button 
+          className="mobile-menu-btn"
+          onClick={onMenuClick}
+          aria-label="Öppna meny"
+        >
+          ☰
+        </button>
+
         {isGroupChat ? (
           <>
             <span className="chat-header-icon">#</span>
