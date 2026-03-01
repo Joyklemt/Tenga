@@ -18,22 +18,27 @@ export default function MessageInput() {
 
   // Parse @mentions from input and extract agent IDs
   const parseTaggedAgents = (text: string): string[] => {
-    const mentionRegex = /@(\w+)/g;
-    const taggedIds: string[] = [];
-    let match;
+    try {
+      const mentionRegex = /@(\w+)/g;
+      const taggedIds: string[] = [];
+      let match;
 
-    while ((match = mentionRegex.exec(text)) !== null) {
-      const mentionName = match[1].toLowerCase();
-      const agent = AGENTS.find(a => 
-        a.name.toLowerCase().includes(mentionName) ||
-        a.name.split(' ').pop()?.toLowerCase() === mentionName
-      );
-      if (agent && !taggedIds.includes(agent.id)) {
-        taggedIds.push(agent.id);
+      while ((match = mentionRegex.exec(text)) !== null) {
+        const mentionName = match[1]?.toLowerCase();
+        if (!mentionName) continue;
+        const agent = AGENTS.find(a =>
+          a.name.toLowerCase().includes(mentionName) ||
+          a.name.split(' ').pop()?.toLowerCase() === mentionName
+        );
+        if (agent && !taggedIds.includes(agent.id)) {
+          taggedIds.push(agent.id);
+        }
       }
-    }
 
-    return taggedIds;
+      return taggedIds;
+    } catch {
+      return [];
+    }
   };
 
   // Handle input change and detect @mentions
