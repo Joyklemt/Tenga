@@ -229,8 +229,8 @@ export function ChatProvider({ children }: { children: ReactNode }) {
             timestamp: new Date(),
           };
           addMessage(activeChannel, errorMessage);
-        } else {
-          // Add agent response
+        } else if (data.content) {
+          // Add agent response (only if non-empty)
           const agentMessage: Message = {
             id: generateId(),
             content: data.content,
