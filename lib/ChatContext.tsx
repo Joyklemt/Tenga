@@ -198,8 +198,8 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         ? [channel.agentId!] 
         : (taggedAgentIds && taggedAgentIds.length > 0 ? taggedAgentIds : []);
 
-      // Get current messages for context (including the new user message)
-      const currentMessages = [...channel.messages, userMessage];
+      // Context up to and including the user's message — shared by all agents this turn
+      const contextMessages = messagesToApiFormat([...channel.messages, userMessage]);
 
       // Send request to each tagged agent sequentially
       for (const agentId of respondingAgents) {
@@ -207,7 +207,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
 
         const apiRequest: ChatApiRequest = {
           agentId,
-          messages: messagesToApiFormat(currentMessages),
+          messages: contextMessages,
           isDM,
         };
 
@@ -239,9 +239,6 @@ export function ChatProvider({ children }: { children: ReactNode }) {
             timestamp: new Date(),
           };
           addMessage(activeChannel, agentMessage);
-          
-          // Update current messages for next agent's context
-          currentMessages.push(agentMessage);
         }
 
         // Add delay between agent responses for natural feel
